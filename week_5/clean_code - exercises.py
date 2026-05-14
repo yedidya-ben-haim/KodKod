@@ -13,9 +13,10 @@ def check_and_validate_user(users_list):
 
 user_list = [
             ["Dan", 25, "active"],
-            ["Noa", 16, "active"],
+            ["Noa", 19, "active"],
             ["Yael", 30, "inactive"],
 ]
 print(check_and_validate_user(user_list))
 
 # endregion
+
