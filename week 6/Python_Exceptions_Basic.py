@@ -71,7 +71,6 @@ def retry(func, n):
 def count_errors(funcs):
     errors_count = 0
 
-    for _ in funcs:
     for fun in funcs:
         try:
             fun()
