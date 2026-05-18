@@ -86,12 +86,16 @@ def group_by_first_letter(list_of_words):
 
 # region Exercise 8
 
-def count_word_frequency(sentence):
-    words_list = sentence.split()
+def count_the_words(text):
+
+    words_list = text.split()
     word_counts = {}
 
     for word in words_list:
-        word_counts[word] = word_counts.get(word, 0) + 1
+        if word not in word_counts:
+            word_counts[word] = 1
+        else:
+            word_counts[word] += 1
 
     return word_counts
 
