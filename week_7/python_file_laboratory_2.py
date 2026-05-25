@@ -49,31 +49,68 @@ for name, avg in results.items():
 # region Part 3
 
 def save_results(averages, output_filename):
-    '''
-    כותבת לקובץ output_filename:
-    שורה ראשונה: כותרת
-    שורות הבאות:שם וממצוע
-    ממוין מגבוה לנמוך
-    '''
+    """
+    פונקציה המקבלת מילון של ממוצעים ושם קובץ פלט,
+    ומשמרת את התוצאות ממוינות מהגבוה לנמוך ללא שימוש ב-enumerate.
+    """
 
-    inverted_list = []
-    for name, avg in averages.items():
-        inverted_list.append((avg, name))
+    sorted_averages = sorted(averages.items(), key=lambda item: item[1], reverse=True)
 
-    inverted_list.sort(reverse=True)
 
-    with open(output_filename, 'w', encoding='utf-8') as file:
-        file.write("=== Student Results ===\n")
+    with open(output_filename, 'w', encoding='utf-8') as f:
+
+        f.write("=== Student Results ===\n")
+
 
         counter = 1
 
-        for avg, name in inverted_list:
-            file.write(f"{counter}. {name}: {avg:.1f}\n")
 
+        for name, avg in sorted_averages:
+
+            f.write(f"{counter}. {name}: {avg:.1f}\n")
+
+            # קידום המונה ב-1 לקראת הסטודנט הבא
             counter += 1
 
+# endregion
+
+# region Part 4
+
+def save_results_with_statistics(averages, output_filename):
+    """
+        פונקציה המקבלת מילון של ממוצעים, כותבת את הסטודנטים הממוינים
+        ומוסיפה בסוף הקובץ סטטיסטיקה כיתתית.
+    """
+    sorted_averages = sorted(averages.items(), key=lambda item: item[1], reverse=True)
+    total_students = len(sorted_averages)
+
+    # חישוב ממוצע של הכיתה
+    sum_of_averages = sum(averages.values())
+    class_average = sum_of_averages / total_students
+
+    # הציון הגבוה והנמוך ביותר (שולפים לפי המיקום ברשימה הממוינת)
+    highest_student, highest_avg = sorted_averages[0]
+    lowest_student, lowest_avg = sorted_averages[-1]
+
+    # ספירת הסטודנטים העוברים (ציון >= 60)
+    passing_count = 0
+    for name, avg in sorted_averages:
+        if avg >= 60:
+            passing_count += 1
 
 
+    # כתיבה לקובץ
+    with open(output_filename, 'w', encoding='utf-8') as f:
+        f.write("=== Student Results ===\n")
+        counter = 1
+        for name, avg in sorted_averages:
+            f.write(f"{counter}. {name}: {avg:.1f}\n")
+            counter += 1
 
-averages = calculate_averages('grades.txt')
-save_results(averages, 'results.txt')
+        f.write("\n=== Statistics ===\n")
+        f.write(f"Class average: {class_average:.1f}\n")
+        f.write(f"Highest: {highest_student} {highest_avg:.1f}\n")
+        f.write(f"Lowest: {lowest_student} {lowest_avg:.1f}\n")
+        f.write(f"Passing (>=60): {passing_count}/{total_students}\n")
+
+# endregion
