@@ -64,7 +64,6 @@ def add_task(filename, description):
     with open(filename, 'a', encoding='utf-8') as file:
         file.write(f'{new_id}|PENDING|{description}\n')
 
-
 def complete_task(filename, task_id):
     """
     משנה את status של משימה task_id מ-PENDING ל-DONE.
@@ -103,7 +102,6 @@ def list_tasks(filename):
 
     print("=========================")
 
-
 def delete_task(filename, task_id):
     tasks = load_tasks(filename)
     for task in tasks:
@@ -120,7 +118,15 @@ def delete_task(filename, task_id):
             line = f"{task_id}|{status}|{desc}\n"
             file.write(line)
 
+def filter_by_status(filename, status):
+    """
+    מדפיסה רשימת משימות לפי סטטוס
+    """
+    tasks = load_tasks(filename)
 
+    for task in tasks:
+        if task['status'] == status:
+            print(f"{task['id']}|{status}|{task['desc']}")
 
 
 def main():
@@ -134,7 +140,9 @@ def main():
         print('1. הצג משימות')
         print('2. הוסף משימה')
         print('3. סמן כהושלם')
-        print('4. יציאה')
+        print('4. מחיקת משימה')
+        print('5. סינון משימות')
+        print('6. יציאה')
 
         choice = input('בחירה:> ').strip()
 
@@ -160,8 +168,12 @@ def main():
                 delete_task(FILENAME, task_id)
             except ValueError:
                 print("שגיאה: נא להזין מספר משימה תקין.")
-
         elif choice == '5':
+            task_status = input("הכנס סטטוס משימה> ").strip()
+            filter_by_status(FILENAME, task_status)
+
+
+        elif choice == '6':
             print('!להתראות')
             break
 
