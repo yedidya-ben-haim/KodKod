@@ -1,7 +1,3 @@
-from asyncio import tasks
-from uuid import main
-
-
 def load_tasks(filename):
     """
     קוראת את הקובץ ומחזירה רשימה של dicts:
@@ -60,14 +56,13 @@ def add_task(filename, description):
     - status = 'PENDING'
     - description = הפרמטר שניתן
     """
-    try:
-        with open(filename, 'r+', encoding='utf-8') as file:
-            lines = file.readlines()
+    tasks = load_tasks(filename)
+    last_task = tasks[-1]
+    new_id = last_task['id'] + 1
 
-            new_id = len(lines)+1
-            file.write(f'{new_id}|PENDING|{description}\n')
-    except FileNotFoundError:
-        print(f"הודעה: הקובץ '{filename}' לא נמצא. ")
+    # נרשום את המשימה החדשה
+    with open(filename, 'a', encoding='utf-8') as file:
+        file.write(f'{new_id}|PENDING|{description}\n')
 
 
 def complete_task(filename, task_id):
@@ -109,6 +104,25 @@ def list_tasks(filename):
     print("=========================")
 
 
+def delete_task(filename, task_id):
+    tasks = load_tasks(filename)
+    for task in tasks:
+        if task['id'] == int(task_id):
+            tasks.remove(task)
+            print(f"המשימה {task_id} נמחקה בהצלחה")
+            break
+
+    with open(filename, 'w', encoding='utf-8') as file:
+        for task in tasks:
+            task_id = task['id']
+            status = task['status']
+            desc = task['desc']
+            line = f"{task_id}|{status}|{desc}\n"
+            file.write(line)
+
+
+
+
 def main():
     """
     הלולאה הראשית של מנהל המשימות (CLI)
@@ -122,7 +136,7 @@ def main():
         print('3. סמן כהושלם')
         print('4. יציאה')
 
-        choice = input('בחירה: ').strip()
+        choice = input('בחירה:> ').strip()
 
         if choice == '1':
             list_tasks(FILENAME)
@@ -140,13 +154,23 @@ def main():
                 complete_task(FILENAME, task_id)
             except ValueError:
                 print("שגיאה: נא להזין מספר משימה תקין.")
-
         elif choice == '4':
+            try:
+                task_id = int(input('מספר משימה: '))
+                delete_task(FILENAME, task_id)
+            except ValueError:
+                print("שגיאה: נא להזין מספר משימה תקין.")
+
+        elif choice == '5':
             print('!להתראות')
             break
 
         else:
             print('בחירה לא תקינה')
+
+
+
+
 
 
 if __name__ == '__main__':
